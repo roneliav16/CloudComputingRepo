@@ -1,0 +1,75 @@
+version: "3.8"
+
+services:
+  mongo-stores:
+    image: mongo
+    container_name: mongo-stores
+    ports:
+      - "27017:27017"
+    expose:
+      - "27017"
+    volumes:
+      - mongo-stores-data:/data/db
+
+  mongo-orders:
+    image: mongo
+    container_name: mongo-orders
+    expose:
+      - "27017"
+    volumes:
+      - mongo-orders-data:/data/db
+
+  pet-store1:
+    build: ./pet_store
+    container_name: pet-store1
+    environment:
+      - STORE_ID=1
+      - MONGO_URL=mongodb://mongo-stores:27017
+      - DB_NAME=petshop
+      - NINJA_API_KEY=oq1OJ+w8AyCbKWIlIcJNlA==OHVm3FpnoCUyEBdX
+    depends_on:
+      - mongo-stores
+    ports:
+      - "5001:5001"
+    expose:
+      - "5001"
+    restart: always
+
+  pet-store2:
+    build: ./pet_store
+    container_name: pet-store2
+    environment:
+      - STORE_ID=2
+      - MONGO_URL=mongodb://mongo-stores:27017
+      - DB_NAME=petshop
+      - NINJA_API_KEY=oq1OJ+w8AyCbKWIlIcJNlA==OHVm3FpnoCUyEBdX
+
+    depends_on:
+      - mongo-stores
+    ports:
+      - "5002:5001"
+    expose:
+      - "5001"
+    restart: always
+
+  pet-order:
+    build: ./pet_order
+    container_name: pet-order
+    environment:
+      - MONGO_URL=mongodb://mongo-orders:27017
+      - DB_NAME=petshop
+      - STORE1_URL=http://pet-store1:5001
+      - STORE2_URL=http://pet-store2:5001
+    depends_on:
+      - mongo-orders
+      - pet-store1
+      - pet-store2
+    ports:
+      - "5003:5003"
+    expose:
+      - "5003"
+    restart: always
+
+volumes:
+  mongo-stores-data:
+  mongo-orders-data:
