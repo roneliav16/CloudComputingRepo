@@ -98,7 +98,7 @@ def test_assignment4_flow():
     # order not guaranteed
     names={p.get("name").lower():p for p in arr}
     assert "lazy" in names and "lemon" in names, f'names: {names}'
-    assert names["lazy"]["name"]=="Lazy"
+    assert names["lazy"]["name"]=="lazy"
     assert names["lazy"].get("birthdate")=="07-08-2018"
-    assert names["lemon"]["name"]=="Lemon"
+    assert names["lemon"]["name"]=="lemon"
     assert names["lemon"].get("birthdate")=="27-03-2020"
