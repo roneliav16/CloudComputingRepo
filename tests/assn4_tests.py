@@ -97,7 +97,7 @@ def test_assignment4_flow():
     arr=gp.json()
     # order not guaranteed
     names={p.get("name"):p for p in arr}
-    assert "Lazy" in names and "Lemon" in names
+    assert "Lazy" in names and "Lemon" in names, f'names: {names}'
     assert names["Lazy"]["name"]=="Lazy"
     assert names["Lazy"].get("birthdate")=="07-08-2018"
     assert names["Lemon"]["name"]=="Lemon"
