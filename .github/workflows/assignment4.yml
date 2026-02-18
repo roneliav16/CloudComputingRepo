@@ -45,13 +45,18 @@ jobs:
           # Pack images for next jobs
           docker save pet-store:latest pet-order:latest -o images.tar
 
-      - name: Upload images + partial log
+      - name: Upload images
         uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
-          path: |
-            images.tar
-            log.txt
+          path: images.tar
+
+      - name: Upload partial log (job1)
+        uses: actions/upload-artifact@v4
+        with:
+          name: job1-log
+          path: log.txt
+
 
   test:
     runs-on: ubuntu-latest
@@ -60,10 +65,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Download images + log
+      - name: Download images
         uses: actions/download-artifact@v4
         with:
           name: build-artifacts
+
+      - name: Download partial log (job1)
+        uses: actions/download-artifact@v4
+        with:
+          name: job1-log
+
 
       - name: Load images
         run: |
@@ -105,14 +116,19 @@ jobs:
           exit $code
 
 
-      - name: Upload pytest results + log (always)
+      - name: Upload pytest results (always)
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-artifacts
-          path: |
-            assn4_test_results.txt
-            log.txt
+          name: test-results
+          path: assn4_test_results.txt
+
+      - name: Upload final log.txt after test (always)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: log.txt
+          path: log.txt
 
       - name: Cleanup
         if: always()
@@ -154,7 +170,6 @@ jobs:
           name: query-artifacts
           path: |
             response.txt
-            log.txt
 
       - name: Cleanup
         if: always()
