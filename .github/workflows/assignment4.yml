@@ -15,14 +15,34 @@ jobs:
           date -Iminutes > log.txt
           echo "Ron Eliav" >> log.txt
 
-      - name: Build images
-        id: build_images
+      - name: Build images (Line 3 in ONE line; terminate on failure)
         run: |
           set +e
+
+          logline=""
+
           docker build -t pet-store:latest ./pet_store
-          if [ $? -eq 0 ]; then echo "image pet-store successfully built;" >> log.txt; else echo "image pet-store not able to be built;" >> log.txt; exit 1; fi
+          if [ $? -eq 0 ]; then
+            logline="${logline}image pet-store successfully built; "
+          else
+            logline="${logline}image pet-store not able to be built; "
+            echo "${logline}" >> log.txt
+            exit 1
+          fi
+
           docker build -t pet-order:latest ./pet_order
-          if [ $? -eq 0 ]; then echo "image pet-order successfully built;" >> log.txt; else echo "image pet-order not able to be built;" >> log.txt; exit 1; fi
+          if [ $? -eq 0 ]; then
+            logline="${logline}image pet-order successfully built; "
+          else
+            logline="${logline}image pet-order not able to be built; "
+            echo "${logline}" >> log.txt
+            exit 1
+          fi
+
+          # Write Line 3 (single line)
+          echo "${logline}" >> log.txt
+
+          # Pack images for next jobs
           docker save pet-store:latest pet-order:latest -o images.tar
 
       - name: Upload images + partial log
@@ -51,16 +71,20 @@ jobs:
 
       - name: Start app (containers)
         run: |
-          docker compose -f docker-compose.assn4.yml up -d --no-build
-          # record container statuses in log
+          docker compose -f docker-compose.yml up -d --no-build
+
+      - name: Record container statuses (Line 4 in ONE line)
+        run: |
+          logline=""
           for c in "pet-store1:pet-store #1" "pet-store2:pet-store #2" "pet-order:pet-order"; do
             name="${c%%:*}"; label="${c##*:}"
             if docker ps --format '{{.Names}}' | grep -q "^${name}$"; then
-              echo "Container ${label} up and running;" >> log.txt
+              logline="${logline}Container ${label} up and running; "
             else
-              echo "Container ${label} failed to run;" >> log.txt
+              logline="${logline}Container ${label} failed to run; "
             fi
           done
+          echo "${logline}" >> log.txt
 
       - name: Install test deps
         run: |
@@ -73,8 +97,13 @@ jobs:
           set +e
           pytest -v tests/assn4_tests.py | tee assn4_test_results.txt
           code=${PIPESTATUS[0]}
-          if [ $code -eq 0 ]; then echo "All pytests succeeded" >> log.txt; else echo "pytests failed" >> log.txt; fi
+          if [ $code -eq 0 ]; then
+            echo "All pytests succeeded;" >> log.txt
+          else
+            echo "pytests failed;" >> log.txt
+          fi
           exit $code
+
 
       - name: Upload pytest results + log (always)
         if: always()
@@ -88,7 +117,7 @@ jobs:
       - name: Cleanup
         if: always()
         run: |
-          docker compose -f docker-compose.assn4.yml down -v || true
+          docker compose -f docker-compose.yml down -v || true
 
   query:
     runs-on: ubuntu-latest
@@ -108,7 +137,7 @@ jobs:
 
       - name: Start app (containers)
         run: |
-          docker compose -f docker-compose.assn4.yml up -d --no-build
+          docker compose -f docker-compose.yml up -d --no-build
 
       - name: Install deps
         run: |
@@ -130,4 +159,4 @@ jobs:
       - name: Cleanup
         if: always()
         run: |
-          docker compose -f docker-compose.assn4.yml down -v || true
+          docker compose -f docker-compose.yml down -v || true

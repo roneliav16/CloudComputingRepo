@@ -1,0 +1,12 @@
+query:1,hasAttribute=Loyal;
+query:1,type=Golden Retriever;
+query:1,lifespan=13;
+
+query:2,type=bulldog;
+query:2,hasAttribute=calm;
+query:2,lifespan=15;
+
+purchase:{"purchaser":"Ron","pet-type":"Golden Retriever"};
+purchase:{"purchaser":"Ron","pet-type":"Australian Shepherd","store":1};
+purchase:{"purchaser":"Ron","pet-type":"bulldog","store":2,"pet-name":"Lazy"};
+purchase:{"purchaser":"Ron","pet-type":"Abyssinian"};
