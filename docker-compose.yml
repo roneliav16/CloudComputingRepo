@@ -20,6 +20,7 @@ services:
       - mongo-orders-data:/data/db
 
   pet-store1:
+    image: pet-store:latest
     build: ./pet_store
     container_name: pet-store1
     environment:
@@ -36,6 +37,7 @@ services:
     restart: always
 
   pet-store2:
+    image: pet-store:latest
     build: ./pet_store
     container_name: pet-store2
     environment:
@@ -53,6 +55,7 @@ services:
     restart: always
 
   pet-order:
+    image: pet-order:latest
     build: ./pet_order
     container_name: pet-order
     environment:
