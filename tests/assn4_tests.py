@@ -96,9 +96,9 @@ def test_assignment4_flow():
     assert gp.status_code==200
     arr=gp.json()
     # order not guaranteed
-    names={p.get("name"):p for p in arr}
-    assert "Lazy" in names and "Lemon" in names, f'names: {names}'
-    assert names["Lazy"]["name"]=="Lazy"
-    assert names["Lazy"].get("birthdate")=="07-08-2018"
-    assert names["Lemon"]["name"]=="Lemon"
-    assert names["Lemon"].get("birthdate")=="27-03-2020"
+    names={p.get("name").lower():p for p in arr}
+    assert "lazy" in names and "lemon" in names, f'names: {names}'
+    assert names["lazy"]["name"]=="Lazy"
+    assert names["lazy"].get("birthdate")=="07-08-2018"
+    assert names["lemon"]["name"]=="Lemon"
+    assert names["lemon"].get("birthdate")=="27-03-2020"
