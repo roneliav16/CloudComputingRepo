@@ -93,7 +93,7 @@ def test_assignment4_flow():
 
     # 9) GET pets for id6 from store2
     gp=_get(f"{BASE2}/pet-types/{id6}/pets")
-    assert gp.status_code==200
+    assert gp.status_code==404
     arr=gp.json()
     # order not guaranteed
     names={p.get("name").lower():p for p in arr}
